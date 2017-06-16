@@ -7,7 +7,7 @@
 - Demo使用的版本为最新的 opencv-3.2.0-android-sdk
 - opencv-3.2.0-android-sdk下载地址：http://opencv.org/releases.html
 
-# 3.感谢网名为“贪婪殇”的百度分享
+# 3.感谢网友的百度分享
 - 文章地址：http://jingyan.baidu.com/album/60ccbceb53533364cab197db.html?picindex=6
 
 # 4.Demo使用人群
