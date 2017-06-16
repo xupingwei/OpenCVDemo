@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\xupingwei\\Documents\\Project\\GithubProject\\OpenCVDemo\\openCVLibrary320\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+ * Original file: C:\\Users\\xupingwei\\Documents\\Project\\OpenCVDemo\\openCVLibrary320\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**
