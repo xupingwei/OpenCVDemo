@@ -16,6 +16,16 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.xaaolaf.opencvdemo.R;
+import com.xaaolaf.opencvdemo.secondsight.filters.Filter;
+import com.xaaolaf.opencvdemo.secondsight.filters.NoneFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.convolution.StrokeEdgedFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.curve.CrossProcessCurveFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.curve.PortraCurveFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.curve.ProviaCurveFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.curve.RecolorCMVFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.curve.RecolorRCFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.curve.RecolorRGVFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.curve.VelviaCurveFilter;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -59,6 +69,20 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     private CameraBridgeViewBase mCameraView;
 
 
+    //滤镜操作
+    private static final String STATE_CURVE_FILTER_INDEX = "curveFilterIndex";
+    private static final String STATE_MIXER_FILTER_INDEX = "curveFilterIndex";
+    private static final String STATE_CONVOLUTION_FILTER_INDEX = "convolutionFilterIndex";
+
+    private Filter[] mCurveFilters;
+    private Filter[] mMixerFilters;
+    private Filter[] mConvolutionFilters;
+
+    private int mCurveFilterIndex;
+    private int mMixerFilterIndex;
+    private int mConvolitionFilterIndex;
+
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -67,6 +91,23 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
                     Log.e(TAG, "OpenCV loaded successfully");
                     mCameraView.enableView();
                     mBgr = new Mat();
+                    mCurveFilters = new Filter[]{
+                            new NoneFilter(),
+                            new PortraCurveFilter(),
+                            new ProviaCurveFilter(),
+                            new VelviaCurveFilter(),
+                            new CrossProcessCurveFilter()
+                    };
+                    mMixerFilters = new Filter[]{
+                            new NoneFilter(),
+                            new RecolorRCFilter(),
+                            new RecolorRGVFilter(),
+                            new RecolorCMVFilter()
+                    };
+                    mConvolutionFilters = new Filter[]{
+                            new NoneFilter(),
+                            new StrokeEdgedFilter()
+                    };
                     break;
                 default:
                     super.onManagerConnected(status);
@@ -80,8 +121,14 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
 
         if (null != savedInstanceState) {
             mCameraIndex = savedInstanceState.getInt(STATE_CAMERA_INDEX, 0);
+            mCurveFilterIndex = savedInstanceState.getInt(STATE_CURVE_FILTER_INDEX, 0);
+            mMixerFilterIndex = savedInstanceState.getInt(STATE_MIXER_FILTER_INDEX, 0);
+            mConvolitionFilterIndex = savedInstanceState.getInt(STATE_CONVOLUTION_FILTER_INDEX, 0);
         } else {
             mCameraIndex = 0;
+            mCurveFilterIndex = 0;
+            mMixerFilterIndex = 0;
+            mConvolitionFilterIndex = 0;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -102,6 +149,9 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_CAMERA_INDEX, mCameraIndex);
+        outState.putInt(STATE_CURVE_FILTER_INDEX, mCurveFilterIndex);
+        outState.putInt(STATE_MIXER_FILTER_INDEX, mMixerFilterIndex);
+        outState.putInt(STATE_CONVOLUTION_FILTER_INDEX, mConvolitionFilterIndex);
         super.onSaveInstanceState(outState);
     }
 
@@ -150,6 +200,23 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             return true;
         }
         switch (item.getItemId()) {
+            case R.id.menu_next_curve_filter:
+                mCurveFilterIndex++;
+                if (mCurveFilterIndex == mCurveFilters.length) {
+                }
+                return true;
+            case R.id.menu_next_mixer_filter:
+                mMixerFilterIndex++;
+                if (mMixerFilterIndex == mMixerFilters.length) {
+                    mMixerFilterIndex = 0;
+                }
+                return true;
+            case R.id.menu_next_convolution_filter:
+                mConvolitionFilterIndex++;
+                if (mConvolitionFilterIndex == mConvolutionFilters.length) {
+                    mConvolitionFilterIndex = 0;
+                }
+                return true;
             case R.id.menu_next_camera:
                 mIsMenuLocked = true;
                 mCameraIndex++;
@@ -180,6 +247,9 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat rgba = inputFrame.rgba();
+        mCurveFilters[mCurveFilterIndex].apply(rgba, rgba);
+        mMixerFilters[mMixerFilterIndex].apply(rgba, rgba);
+        mConvolutionFilters[mConvolitionFilterIndex].apply(rgba, rgba);
         if (mIsPhotoPending) {
             mIsPhotoPending = false;
             takePhoto(rgba);
