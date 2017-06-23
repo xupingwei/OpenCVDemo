@@ -18,3 +18,7 @@
 # 5.Demo使用说明
 - 直接下载源码，导入Android studio进行编译并运行
 - 本Demo使用的是Android Studio2.3.2版本，测试Demo可正常运行
+
+# 6.Demo功能说明
+- 图像处理，简单的图像滤镜
+- 图像的识别和跟踪

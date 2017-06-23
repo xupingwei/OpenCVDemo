@@ -31,4 +31,5 @@
     <string name="menu_next_curve_filter">Next Curve</string>
     <string name="menu_next_mixer_filter">Next Mixer</string>
     <string name="menu_next_convolution_filter">Next Kernel</string>
+    <string name="menu_next_image_detection_filter">Next Tracker</string>
 </resources>

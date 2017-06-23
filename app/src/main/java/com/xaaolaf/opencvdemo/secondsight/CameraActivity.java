@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.xaaolaf.opencvdemo.R;
 import com.xaaolaf.opencvdemo.secondsight.filters.Filter;
 import com.xaaolaf.opencvdemo.secondsight.filters.NoneFilter;
+import com.xaaolaf.opencvdemo.secondsight.filters.ar.ImagesDetectionFilter;
 import com.xaaolaf.opencvdemo.secondsight.filters.convolution.StrokeEdgedFilter;
 import com.xaaolaf.opencvdemo.secondsight.filters.curve.CrossProcessCurveFilter;
 import com.xaaolaf.opencvdemo.secondsight.filters.curve.PortraCurveFilter;
@@ -37,6 +38,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by xupingwei on 2017/6/23.
@@ -73,15 +75,18 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     private static final String STATE_CURVE_FILTER_INDEX = "curveFilterIndex";
     private static final String STATE_MIXER_FILTER_INDEX = "curveFilterIndex";
     private static final String STATE_CONVOLUTION_FILTER_INDEX = "convolutionFilterIndex";
+    private static final String STATE_IMAGE_DETECTION_FILTER_INDEX = "imageDetectionFilterIndex";
+
 
     private Filter[] mCurveFilters;
     private Filter[] mMixerFilters;
     private Filter[] mConvolutionFilters;
+    private Filter[] mImageDetectionFilters;
 
     private int mCurveFilterIndex;
     private int mMixerFilterIndex;
     private int mConvolitionFilterIndex;
-
+    private int mImageDetectioinFilterIndex;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -108,6 +113,19 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
                             new NoneFilter(),
                             new StrokeEdgedFilter()
                     };
+//                    Filter starryNight;
+//                    try {
+//                        starryNight = new ImagesDetectionFilter(CameraActivity.this, R.drawable.starry_night);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        Log.e(TAG, "Failed to load drawable: " + "starry_night");
+//                        e.fillInStackTrace();
+//                        break;
+//                    }
+//                    mImageDetectionFilters = new Filter[]{
+//                            new NoneFilter(),
+//                            starryNight,
+//                    };
                     break;
                 default:
                     super.onManagerConnected(status);
@@ -124,11 +142,13 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             mCurveFilterIndex = savedInstanceState.getInt(STATE_CURVE_FILTER_INDEX, 0);
             mMixerFilterIndex = savedInstanceState.getInt(STATE_MIXER_FILTER_INDEX, 0);
             mConvolitionFilterIndex = savedInstanceState.getInt(STATE_CONVOLUTION_FILTER_INDEX, 0);
+            mImageDetectioinFilterIndex = savedInstanceState.getInt(STATE_IMAGE_DETECTION_FILTER_INDEX, 0);
         } else {
             mCameraIndex = 0;
             mCurveFilterIndex = 0;
             mMixerFilterIndex = 0;
             mConvolitionFilterIndex = 0;
+            mImageDetectioinFilterIndex = 0;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -152,6 +172,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         outState.putInt(STATE_CURVE_FILTER_INDEX, mCurveFilterIndex);
         outState.putInt(STATE_MIXER_FILTER_INDEX, mMixerFilterIndex);
         outState.putInt(STATE_CONVOLUTION_FILTER_INDEX, mConvolitionFilterIndex);
+        outState.putInt(STATE_IMAGE_DETECTION_FILTER_INDEX, mImageDetectioinFilterIndex);
         super.onSaveInstanceState(outState);
     }
 
@@ -160,7 +181,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, this, mLoaderCallback);
         } else {
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
@@ -200,6 +221,12 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             return true;
         }
         switch (item.getItemId()) {
+//            case R.id.menu_next_image_detection_filter:
+//                mImageDetectioinFilterIndex++;
+//                if (mImageDetectioinFilterIndex == mImageDetectionFilters.length) {
+//                    mImageDetectioinFilterIndex = 0;
+//                }
+//                return true;
             case R.id.menu_next_curve_filter:
                 mCurveFilterIndex++;
                 if (mCurveFilterIndex == mCurveFilters.length) {
@@ -248,9 +275,18 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat rgba = inputFrame.rgba();
-        mCurveFilters[mCurveFilterIndex].apply(rgba, rgba);
-        mMixerFilters[mMixerFilterIndex].apply(rgba, rgba);
-        mConvolutionFilters[mConvolitionFilterIndex].apply(rgba, rgba);
+        if (null != mImageDetectionFilters) {
+            mImageDetectionFilters[mImageDetectioinFilterIndex].apply(rgba, rgba);
+        }
+        if (null != mCurveFilters) {
+            mCurveFilters[mCurveFilterIndex].apply(rgba, rgba);
+        }
+        if (null != mMixerFilters) {
+            mMixerFilters[mMixerFilterIndex].apply(rgba, rgba);
+        }
+        if (null != mConvolutionFilters) {
+            mConvolutionFilters[mConvolitionFilterIndex].apply(rgba, rgba);
+        }
         if (mIsPhotoPending) {
             mIsPhotoPending = false;
             takePhoto(rgba);
