@@ -203,6 +203,7 @@ public class CameraActivity extends AppCompatActivity implements CameraBridgeVie
             case R.id.menu_next_curve_filter:
                 mCurveFilterIndex++;
                 if (mCurveFilterIndex == mCurveFilters.length) {
+                    mCurveFilterIndex = 0;
                 }
                 return true;
             case R.id.menu_next_mixer_filter:
