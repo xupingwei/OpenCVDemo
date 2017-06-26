@@ -27,6 +27,9 @@
         <activity
             android:name=".secondsight.LabActivity"
             android:screenOrientation="landscape" />
+        <activity
+            android:name=".images.GrayImagesActivity"
+            android:label="图像灰度化" />
     </application>
 
     <supports-screens
