@@ -12,8 +12,7 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:label="@string/app_name"
-            android:screenOrientation="landscape">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,6 +29,10 @@
         <activity
             android:name=".images.GrayImagesActivity"
             android:label="图像灰度化" />
+        <activity
+            android:name=".images.FaceDetectActivity"
+            android:label="人脸检测"
+            android:screenOrientation="landscape" />
     </application>
 
     <supports-screens

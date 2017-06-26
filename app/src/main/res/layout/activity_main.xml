@@ -27,4 +27,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="图像灰度化" />
+
+    <Button
+        android:id="@+id/btn_face_detect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="人脸检测" />
 </LinearLayout>
