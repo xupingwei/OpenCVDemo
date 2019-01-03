@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xaaolaf.opencvdemo"
-    android:versionCode="301"
-    android:versionName="3.01">
+    package="com.xaaolaf.opencvdemo">
 
     <application
         android:icon="@drawable/icon"
@@ -41,8 +39,6 @@
         android:normalScreens="true"
         android:resizeable="true"
         android:smallScreens="true" />
-
-    <uses-sdk android:minSdkVersion="17" />
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

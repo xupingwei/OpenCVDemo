@@ -1,8 +1,7 @@
 *.iml
 /.gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+/.idea
 .DS_Store
 /build
 /captures
@@ -10,3 +9,4 @@
 /openCVLibrary320/build
 /openCVLibrary320/openCVLibrary320.iml
 /gradle
+/app/build
